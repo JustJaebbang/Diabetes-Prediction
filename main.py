@@ -6,7 +6,7 @@ import pandas as pd
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
-MODEL_PATH: str | None = None
+MODEL_PATH = "ml_model/diabetes_gaussian_process.joblib"
 FEATURE_COLUMNS = ["혈당", "BMI", "나이"]
 
 
@@ -21,7 +21,7 @@ class PredictionResult(BaseModel):
     bmi: float
     predicted_class: int
     model_score: float
-    notice: str = "실험용 모델 추정치입니다. 당뇨 진단은 의료기관의 검사를 통해 확인하세요."
+    # notice: str = "실험용 모델 추정치입니다. 당뇨 진단은 의료기관의 검사를 통해 확인하세요."
 
 
 @asynccontextmanager
@@ -39,12 +39,6 @@ app = FastAPI(title="당뇨 예측 API", lifespan=lifespan)
 @app.get("/")
 async def read_root():
     return {"message": "Hello Diabetes!"}
-
-
-# @app.get("/items/{item_id}")
-# async def read_item(item_id: int, query_param: str | None = None):
-#     return {"item_id": item_id, "query_param": query_param}
-
 
 @app.post("/predict", response_model=PredictionResult)
 def predict(payload: PredictionInput, request: Request):
